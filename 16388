@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komerce — Gestion Commerciale</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c8955a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Komerce">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj4KICA8cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjQwIiBmaWxsPSIjYzg5NTVhIi8+CiAgPHRleHQgeD0iOTYiIHk9IjE0MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTMwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzBmMGYwZiI+SzwvdGV4dD4KPC9zdmc+">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj4KICA8cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjQwIiBmaWxsPSIjYzg5NTVhIi8+CiAgPHRleHQgeD0iOTYiIHk9IjE0MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMTMwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzBmMGYwZiI+SzwvdGV4dD4KPC9zdmc+">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sty.css">
+</head>
+<body>
+
+    <!-- Écran sélection boutique -->
+    <div id="shopScreen" class="shop-screen" style="display:none;">
+        <div class="shop-screen-inner">
+            <div class="shop-screen-brand">
+                <div class="brand-icon" style="width:48px;height:48px;font-size:24px;">K</div>
+                <h1 class="shop-screen-title">Komerce</h1>
+                <p class="shop-screen-sub">Sélectionnez ou créez une boutique</p>
+            </div>
+
+            <div id="shopList" class="shop-list"></div>
+
+            <div class="shop-create-form">
+                <div class="field-row">
+                    <div class="field" style="flex:1">
+                        <input type="text" id="newShopName" class="field-input" placeholder="Nom de la boutique...">
+                    </div>
+                    <div class="field" style="flex:0">
+                        <input type="color" id="newShopColor" class="shop-color-picker" value="#c8955a" title="Couleur">
+                    </div>
+                </div>
+                <button id="createShopBtn" class="btn-primary" style="width:100%;">+ Créer la boutique</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-shell" id="appShell">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">K</div>
+                <div class="brand-text">
+                    <span class="brand-name">Komerce</span>
+                    <span class="brand-tagline">Gestion commerciale</span>
+                </div>
+            </div>
+
+            <!-- Badge boutique active -->
+            <div id="shopBadge" class="shop-badge" style="display:none;">
+                <div class="shop-badge-dot"></div>
+                <span id="shopBadgeName" class="shop-badge-name"></span>
+                <button class="shop-badge-switch" id="switchShopBtn" title="Changer de boutique">⇄</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-tab="dashboard" href="#">
+                    <span class="nav-icon">◈</span>
+                    <span class="nav-label">Tableau de bord</span>
+                </a>
+                <a class="nav-item" data-tab="products" href="#">
+                    <span class="nav-icon">⬡</span>
+                    <span class="nav-label">Produits</span>
+                </a>
+                <a class="nav-item" data-tab="inventory" href="#">
+                    <span class="nav-icon">⊞</span>
+                    <span class="nav-label">Inventaire</span>
+                </a>
+                <a class="nav-item" data-tab="sales" href="#">
+                    <span class="nav-icon">◉</span>
+                    <span class="nav-label">Ventes</span>
+                </a>
+                <a class="nav-item" data-tab="expenses" href="#">
+                    <span class="nav-icon">◍</span>
+                    <span class="nav-label">Dépenses</span>
+                </a>
+                <a class="nav-item" data-tab="profit" href="#">
+                    <span class="nav-icon">◆</span>
+                    <span class="nav-label">Bénéfices</span>
+                </a>
+                <a class="nav-item" data-tab="history" href="#">
+                    <span class="nav-icon">◷</span>
+                    <span class="nav-label">Historique</span>
+                </a>
+                <a class="nav-item" data-tab="caisse" href="#">
+                    <span class="nav-icon">◈</span>
+                    <span class="nav-label">Caisse & Comptes</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a class="nav-item" data-tab="global" href="#">
+                    <span class="nav-icon">⊕</span>
+                    <span class="nav-label">Vue globale</span>
+                </a>
+                <a class="nav-item" data-tab="gerantscli" href="#">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Gérants & Clients</span>
+                </a>
+                <a class="nav-item" data-tab="creditsbancaires" href="#">
+                    <span class="nav-icon">🏦</span>
+                    <span class="nav-label">Crédits bancaires</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="themeToggleBtn" class="sidebar-action theme-toggle">
+                    <span id="themeIcon">☀</span> <span id="themeLabel">Thème clair</span>
+                </button>
+                <button id="exportDataBtn" class="sidebar-action">
+                    <span>↑</span> Exporter
+                </button>
+                <button id="importDataBtn" class="sidebar-action">
+                    <span>↓</span> Importer
+                </button>
+                <input type="file" id="importFileInput" accept=".json" style="display:none;">
+                <button id="printBtn" class="sidebar-action">
+                    <span>⎙</span> Imprimer
+                </button>
+                <button id="resetAllBtn" class="sidebar-action danger">
+                    <span>⊗</span> Réinitialiser
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile header -->
+        <header class="mobile-header">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <span class="mobile-brand">Komerce</span>
+            <span class="mobile-date" id="mobileDate"></span>
+        </header>
+
+        <!-- Main content -->
+        <main class="main-content">
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="tab-content active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Tableau de bord</h1>
+                        <p class="page-subtitle" id="dashboardDate">Chargement...</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-ghost" onclick="App.goToInventory()">+ Inventaire du jour</button>
+                    </div>
+                </div>
+
+                <!-- Alertes crédits bancaires -->
+                <div id="cbAlertsBanner" class="cb-alerts-banner" style="display:none;"></div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card kpi-revenue">
+                        <div class="kpi-label">Chiffre d'affaires total</div>
+                        <div class="kpi-value" id="kpiRevenue">0 GNF</div>
+                        <div class="kpi-sub" id="kpiRevenueSub">Toutes périodes</div>
+                    </div>
+                    <div class="kpi-card kpi-profit">
+                        <div class="kpi-label">Bénéfice net</div>
+                        <div class="kpi-value" id="kpiProfit">0 GNF</div>
+                        <div class="kpi-sub" id="kpiProfitSub">Toutes périodes</div>
+                    </div>
+                    <div class="kpi-card kpi-margin">
+                        <div class="kpi-label">Marge nette</div>
+                        <div class="kpi-value" id="kpiMargin">0%</div>
+                        <div class="kpi-sub">CA − Achats − Dépenses</div>
+                    </div>
+                    <div class="kpi-card kpi-stock">
+                        <div class="kpi-label">Valeur du stock</div>
+                        <div class="kpi-value" id="kpiStock">0 GNF</div>
+                        <div class="kpi-sub">Prix de vente potentiel</div>
+                    </div>
+                    <div class="kpi-card kpi-liquidity">
+                        <div class="kpi-label">Liquidités totales</div>
+                        <div class="kpi-value" id="kpiLiquidity">0 GNF</div>
+                        <div class="kpi-sub">Caisse + Mobile + Banque</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card dash-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Ventes récentes</h2>
+                            <a data-tab="sales" href="#" class="card-link nav-item">Voir tout →</a>
+                        </div>
+                        <div id="recentSalesList" class="recent-list"></div>
+                        <div id="emptyRecentSales" class="empty-mini" style="display:none">Aucune vente enregistrée</div>
+                    </div>
+
+                    <div class="card dash-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Stocks critiques</h2>
+                            <a data-tab="products" href="#" class="card-link nav-item">Gérer →</a>
+                        </div>
+                        <div id="lowStockList" class="recent-list"></div>
+                        <div id="emptyLowStock" class="empty-mini" style="display:none">Tous les stocks sont OK ✓</div>
+                    </div>
+
+                    <div class="card dash-card full-width">
+                        <div class="card-header">
+                            <h2 class="card-title">Situation de la caisse</h2>
+                            <a data-tab="caisse" href="#" class="card-link nav-item">Gérer →</a>
+                        </div>
+                        <div id="dashAccountsSummary" class="dash-accounts-summary"></div>
+                    </div>
+
+                    <div class="card dash-card full-width">
+                        <div class="card-header">
+                            <h2 class="card-title">Performance par produit</h2>
+                        </div>
+                        <div id="productPerformance" class="perf-bars"></div>
+                        <div id="emptyPerformance" class="empty-mini" style="display:none">Enregistrez des ventes pour voir les performances</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRODUITS -->
+            <section id="products" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Produits</h1>
+                        <p class="page-subtitle">Gérez votre catalogue et vos stocks</p>
+                    </div>
+                </div>
+
+                <div class="stock-banner">
+                    <div class="stock-banner-item">
+                        <span class="stock-banner-label">Valeur d'achat</span>
+                        <span id="stockPurchaseValue" class="stock-banner-value">0 GNF</span>
+                    </div>
+                    <div class="stock-banner-divider"></div>
+                    <div class="stock-banner-item">
+                        <span class="stock-banner-label">Valeur de vente</span>
+                        <span id="stockSaleValue" class="stock-banner-value highlight">0 GNF</span>
+                    </div>
+                    <div class="stock-banner-divider"></div>
+                    <div class="stock-banner-item">
+                        <span class="stock-banner-label">Marge potentielle</span>
+                        <span id="stockMarginValue" class="stock-banner-value accent">0 GNF</span>
+                    </div>
+                </div>
+
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Nouveau produit</h2>
+                            </div>
+                            <form id="productForm" class="form-stack">
+                                <div class="field">
+                                    <label class="field-label">Nom du produit</label>
+                                    <input type="text" id="productName" class="field-input" required placeholder="Ex: Coca-Cola 33cl">
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Prix de vente (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="productPrice" class="field-input" required placeholder="5 000">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Prix d'achat (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="productCost" class="field-input" required placeholder="3 000">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Stock initial</label>
+                                    <input type="text" inputmode="decimal" id="productStock" class="field-input" required placeholder="50">
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Seuil d'alerte stock</label>
+                                    <input type="number" id="productAlert" class="field-input" min="0" placeholder="10 (optionnel)">
+                                </div>
+                                <button type="submit" class="btn-primary">Ajouter le produit</button>
+                            </form>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Réapprovisionnement</h2>
+                            </div>
+                            <form id="restockForm" class="form-stack">
+                                <div class="field">
+                                    <label class="field-label">Produit</label>
+                                    <select id="restockProduct" class="field-input field-select" required>
+                                        <option value="">— Sélectionner un produit —</option>
+                                    </select>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Quantité reçue</label>
+                                        <input type="text" inputmode="decimal" id="restockQuantity" class="field-input" required placeholder="100">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Prix d'achat (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="restockCost" class="field-input" required placeholder="3 000">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Date de réception</label>
+                                    <input type="date" id="restockDate" class="field-input" required>
+                                </div>
+                                <div class="restock-preview" id="restockPreview" style="display:none;">
+                                    <div class="preview-row"><span>Stock actuel</span><span id="restockCurrentStock">—</span></div>
+                                    <div class="preview-row"><span>Après réappro</span><span id="restockNewStock">—</span></div>
+                                    <div class="preview-row accent"><span>Coût total</span><span id="restockTotalCost">—</span></div>
+                                </div>
+                                <button type="submit" class="btn-secondary">Réapprovisionner</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-right">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Catalogue</h2>
+                                <span id="productCount" class="badge">0 produit</span>
+                            </div>
+                            <div class="field" style="margin-bottom: 16px;">
+                                <input type="text" id="productSearch" class="field-input" placeholder="Rechercher un produit...">
+                            </div>
+                            <div id="productsList" class="products-list"></div>
+                            <div id="emptyProducts" class="empty-state" style="display:none">
+                                <div class="empty-icon">⬡</div>
+                                <p>Aucun produit enregistré.</p>
+                                <p class="empty-hint">Ajoutez votre premier produit avec le formulaire.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Modal -->
+                <div id="editModal" class="modal-overlay" style="display:none;">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Modifier le produit</h2>
+                            <button class="modal-close" onclick="App.closeEditModal()">✕</button>
+                        </div>
+                        <form id="editProductForm" class="form-stack">
+                            <input type="hidden" id="editProductId">
+                            <div class="field">
+                                <label class="field-label">Nom du produit</label>
+                                <input type="text" id="editProductName" class="field-input" required>
+                            </div>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label class="field-label">Prix de vente (GNF)</label>
+                                    <input type="text" inputmode="decimal" id="editProductPrice" class="field-input" required>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Prix d'achat (GNF)</label>
+                                    <input type="text" inputmode="decimal" id="editProductCost" class="field-input" required>
+                                </div>
+                            </div>
+                            <div class="field-row">
+                                <div class="field">
+                                    <label class="field-label">Stock initial</label>
+                                    <input type="text" inputmode="decimal" id="editProductStock" class="field-input" required>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Seuil d'alerte</label>
+                                    <input type="number" id="editProductAlert" class="field-input" min="0" placeholder="10">
+                                </div>
+                            </div>
+                            <div class="field-note">⚠ Modifier le stock initial n'affecte pas les inventaires déjà enregistrés</div>
+                            <div class="field-row">
+                                <button type="submit" class="btn-primary">Enregistrer</button>
+                                <button type="button" class="btn-ghost" onclick="App.closeEditModal()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INVENTAIRE -->
+            <section id="inventory" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Inventaire</h1>
+                        <p class="page-subtitle">Comptage journalier → Ventes déduites automatiquement</p>
+                    </div>
+                </div>
+
+                <div class="info-banner">
+                    <div class="info-formula">
+                        <span class="formula-text">Ventes = Stock (hier soir) − Stock (compté ce soir)</span>
+                    </div>
+                    <p class="info-note">Comptez votre stock chaque soir. Les ventes sont calculées par différence avec le stock précédent.</p>
+                </div>
+
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Inventaire du jour</h2>
+                                <div id="inventoryDateDisplay" class="date-badge"></div>
+                            </div>
+                            <form id="inventoryForm" class="form-stack">
+                                <div id="inventoryInputs" class="inventory-grid"></div>
+                                <div id="emptyInventory" class="empty-state" style="display:none">
+                                    <div class="empty-icon">⊞</div>
+                                    <p>Ajoutez d'abord des produits dans l'onglet "Produits".</p>
+                                </div>
+                                <div id="invLiveTotal" class="inv-live-total" style="display:none;">
+                                    <div class="inv-live-item">
+                                        <span class="inv-live-label">CA du jour</span>
+                                        <span id="invTotalCA" class="inv-live-val pos">0 GNF</span>
+                                    </div>
+                                    <div class="inv-live-item">
+                                        <span class="inv-live-label">Marge du jour</span>
+                                        <span id="invTotalMarge" class="inv-live-val accent">0 GNF</span>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary" id="inventorySubmitBtn" style="display:none;">Enregistrer l'inventaire</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-right">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Corriger un inventaire passé</h2>
+                            </div>
+                            <div class="field" style="margin-bottom: 16px;">
+                                <label class="field-label">Sélectionner une date</label>
+                                <input type="date" id="historyDatePicker" class="field-input">
+                            </div>
+                            <div id="historyInventoryEdit" class="inventory-grid" style="display:none;"></div>
+                            <button id="updateHistoryBtn" class="btn-secondary" style="display:none; margin-top:12px;">
+                                Mettre à jour et recalculer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VENTES -->
+            <section id="sales" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Ventes</h1>
+                        <p class="page-subtitle">Historique calculé à partir des inventaires</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Ventes du jour</h2>
+                        <div id="todaySalesTotal" class="kpi-inline"></div>
+                    </div>
+                    <div id="todaySales" class="sales-day-grid"></div>
+                    <div id="emptyTodaySales" class="empty-state" style="display:none">
+                        <div class="empty-icon">◉</div>
+                        <p>Aucun inventaire enregistré aujourd'hui.</p>
+                        <p class="empty-hint">Allez dans l'onglet <a data-tab="inventory" href="#" class="nav-item inline-link">Inventaire</a> pour enregistrer le stock du soir.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Toutes les ventes</h2>
+                        <div class="table-filters">
+                            <input type="text" id="salesSearch" class="field-input mini" placeholder="Filtrer...">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table" id="salesByProductTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Produit</th>
+                                    <th>Stock veille</th>
+                                    <th>Stock compté</th>
+                                    <th>Qté vendue</th>
+                                    <th>Sorties</th>
+                                    <th>CA</th>
+                                    <th>Marge</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesByProductBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptySalesByProduct" class="empty-state" style="display:none">
+                        <p>Aucune vente calculée.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DÉPENSES -->
+            <section id="expenses" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Dépenses</h1>
+                        <p class="page-subtitle">Charges fixes et variables</p>
+                    </div>
+                </div>
+
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Nouvelle dépense</h2>
+                            </div>
+                            <form id="expenseForm" class="form-stack">
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Date</label>
+                                        <input type="date" id="expenseDate" class="field-input" required>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Catégorie</label>
+                                        <select id="expenseCategory" class="field-input field-select" required>
+                                            <option value="">— Catégorie —</option>
+                                            <option value="loyer">🏠 Loyer</option>
+                                            <option value="electricite">⚡ Électricité / Eau / Gaz</option>
+                                            <option value="fournitures">📎 Fournitures</option>
+                                            <option value="marketing">📢 Marketing / Pub</option>
+                                            <option value="salaires">👥 Salaires</option>
+                                            <option value="maintenance">🔧 Maintenance</option>
+                                            <option value="transport">🚚 Transport</option>
+                                            <option value="impots">📋 Impôts / Taxes</option>
+                                            <option value="autre">❓ Autre</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Description</label>
+                                    <input type="text" id="expenseDescription" class="field-input" required placeholder="Ex: Loyer avril 2026">
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Montant (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="expenseAmount" class="field-input" required placeholder="500 000">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Récurrence</label>
+                                        <select id="expenseRecurring" class="field-input field-select">
+                                            <option value="once">Une fois</option>
+                                            <option value="daily">Quotidienne</option>
+                                            <option value="weekly">Hebdomadaire</option>
+                                            <option value="monthly">Mensuelle</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary">Ajouter la dépense</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-right">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Dépenses par catégorie</h2>
+                            </div>
+                            <div id="expensesByCategory" class="category-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Toutes les dépenses</h2>
+                        <div id="expensesTotal" class="kpi-inline negative"></div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table" id="expensesTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Catégorie</th>
+                                    <th>Description</th>
+                                    <th>Montant</th>
+                                    <th>Récurrence</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyExpenses" class="empty-state" style="display:none">
+                        <div class="empty-icon">◍</div>
+                        <p>Aucune dépense enregistrée.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BÉNÉFICES -->
+            <section id="profit" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Bénéfices</h1>
+                        <p class="page-subtitle">Analyse financière complète</p>
+                    </div>
+                </div>
+
+                <div class="profit-summary">
+                    <div class="profit-block revenue">
+                        <div class="profit-block-label">Chiffre d'affaires</div>
+                        <div class="profit-block-value" id="statRevenue">0 GNF</div>
+                    </div>
+                    <div class="profit-operator">−</div>
+                    <div class="profit-block cost">
+                        <div class="profit-block-label">Coût des marchandises</div>
+                        <div class="profit-block-value" id="statCOGS">0 GNF</div>
+                    </div>
+                    <div class="profit-operator">−</div>
+                    <div class="profit-block expenses">
+                        <div class="profit-block-label">Dépenses totales</div>
+                        <div class="profit-block-value" id="statExpenses">0 GNF</div>
+                    </div>
+                    <div class="profit-operator">=</div>
+                    <div class="profit-block net">
+                        <div class="profit-block-label">BÉNÉFICE NET</div>
+                        <div class="profit-block-value" id="statNetProfit">0 GNF</div>
+                    </div>
+                </div>
+
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Analyse par période</h2>
+                            </div>
+                            <div class="field-row" style="margin-bottom: 12px;">
+                                <div class="field">
+                                    <label class="field-label">Du</label>
+                                    <input type="date" id="profitStartDate" class="field-input">
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Au</label>
+                                    <input type="date" id="profitEndDate" class="field-input">
+                                </div>
+                            </div>
+                            <button id="calculateProfitBtn" class="btn-primary">Calculer la période</button>
+                            <div id="profitPeriodResult" style="display:none; margin-top:20px;">
+                                <div class="period-result-card">
+                                    <div class="period-row"><span>Chiffre d'affaires</span><span id="periodRevenue" class="pos">—</span></div>
+                                    <div class="period-row"><span>− Coût marchandises</span><span id="periodCOGS" class="neg">—</span></div>
+                                    <div class="period-row"><span>− Dépenses</span><span id="periodExpenses" class="neg">—</span></div>
+                                    <div class="period-row total"><span>= Bénéfice net</span><span id="periodNet">—</span></div>
+                                    <div class="period-row muted"><span>Marge nette</span><span id="periodMargin">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Dépenses par catégorie</h2>
+                            </div>
+                            <div id="profitExpenseBreakdown" class="category-chart"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-right">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Valorisation du stock</h2>
+                            </div>
+                            <div class="stock-detail">
+                                <div class="stock-detail-row">
+                                    <span>Valeur d'achat</span>
+                                    <span id="profitStockPurchase" class="muted-val">0 GNF</span>
+                                </div>
+                                <div class="stock-detail-row highlight-row">
+                                    <span>Valeur de vente</span>
+                                    <span id="profitStockSale" class="pos-val">0 GNF</span>
+                                </div>
+                                <div class="stock-detail-row">
+                                    <span>Marge potentielle</span>
+                                    <span id="profitStockMargin" class="accent-val">0 GNF</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Performance produits</h2>
+                            </div>
+                            <div id="profitBreakdown" class="profit-breakdown-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORIQUE -->
+            <section id="history" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Historique</h1>
+                        <p class="page-subtitle">Tous les inventaires enregistrés</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Inventaires journaliers</h2>
+                        <input type="text" id="historySearch" class="field-input mini" placeholder="Filtrer par date ou produit...">
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table" id="inventoryHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Produit</th>
+                                    <th>Stock compté</th>
+                                    <th>Ventes déduites</th>
+                                    <th>CA</th>
+                                    <th>Marge</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryHistoryBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyInventoryHistory" class="empty-state" style="display:none">
+                        <div class="empty-icon">◷</div>
+                        <p>Aucun inventaire enregistré.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CAISSE & COMPTES -->
+            <section id="caisse" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Caisse & Comptes</h1>
+                        <p class="page-subtitle">Liquidités, clôture journalière et mouvements</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="total-liquidity-badge">
+                            Liquidités totales : <span id="totalLiquidity" class="liq-value">0 GNF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soldes comptes -->
+                <div id="accountsBar" class="accounts-bar"></div>
+
+                <!-- Clôture de caisse -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Clôture de caisse du jour</h2>
+                        <div class="date-badge" id="closingDateBadge"></div>
+                    </div>
+
+                    <div class="field" style="margin-bottom:16px;">
+                        <label class="field-label">👤 Gérant responsable du jour</label>
+                        <select id="closingGerantSelect" class="field-input field-select">
+                            <option value="">— Sélectionner le gérant —</option>
+                        </select>
+                    </div>
+
+                    <!-- Résumé attendu -->
+                    <div class="closing-summary">
+                        <div class="closing-summary-row">
+                            <span class="closing-summary-label">CA attendu (inventaire)</span>
+                            <span id="closingExpectedRevenue" class="closing-summary-val pos">0 GNF</span>
+                        </div>
+                        <div class="closing-summary-row">
+                            <span class="closing-summary-label">− Dépenses du jour</span>
+                            <span id="closingTodayExpenses" class="closing-summary-val neg">0 GNF</span>
+                        </div>
+                        <div class="closing-summary-row total">
+                            <span class="closing-summary-label">= Net attendu en caisse</span>
+                            <span id="closingExpectedNet" class="closing-summary-val">0 GNF</span>
+                        </div>
+                    </div>
+
+                    <!-- Saisie argent réel -->
+                    <div class="closing-real-section">
+                        <h3 class="closing-section-title">Argent réellement compté</h3>
+                        <div class="field-row" id="closingRealInputs"></div>
+                    </div>
+
+                    <!-- Écart live -->
+                    <div class="closing-gap-display">
+                        <div class="closing-gap-row">
+                            <span>Total encaissé réel</span>
+                            <span id="closingLiveReal" class="mono">0 GNF</span>
+                        </div>
+                        <div class="closing-gap-row gap-row">
+                            <span>Écart (réel − attendu)</span>
+                            <span id="closingLiveGap" class="mono gap-val">0 GNF</span>
+                        </div>
+                    </div>
+
+                    <div class="field" style="margin-top:12px;">
+                        <label class="field-label">Note / explication de l'écart (optionnel)</label>
+                        <input type="text" id="closingNote" class="field-input" placeholder="Ex: Offert à un client, erreur de monnaie...">
+                    </div>
+
+                    <button id="validateClosingBtn" class="btn-primary" style="margin-top:14px;">
+                        ✓ Valider la clôture et verser en caisse
+                    </button>
+
+                    <!-- Historique clôtures du jour -->
+                    <div id="closingHistoryWrap" style="display:none; margin-top:20px;">
+                        <div class="closing-history-title">Clôtures validées aujourd'hui</div>
+                        <div id="closingHistoryList"></div>
+                    </div>
+                </div>
+
+                <!-- Virement entre comptes -->
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Virement entre comptes</h2>
+                            </div>
+                            <form id="transferForm" class="form-stack">
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">De</label>
+                                        <select id="transferFrom" class="field-input field-select"></select>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Vers</label>
+                                        <select id="transferTo" class="field-input field-select"></select>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Montant (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="transferAmount" class="field-input" required placeholder="100 000">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Date</label>
+                                        <input type="date" id="transferDate" class="field-input" required>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Libellé</label>
+                                    <input type="text" id="transferLabel" class="field-input" placeholder="Ex: Dépôt banque">
+                                </div>
+                                <button type="submit" class="btn-secondary">Effectuer le virement</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-right">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Mouvement manuel</h2>
+                                <p style="font-size:12px;color:var(--text-muted)">Cliquez ＋ ou － sur un compte</p>
+                            </div>
+                            <div class="manual-hint">
+                                <p>Pour ajouter un mouvement sur un compte spécifique, cliquez sur <strong>＋</strong> (entrée) ou <strong>－</strong> (sortie) directement sur la carte du compte.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mouvements -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Tous les mouvements</h2>
+                        <input type="text" id="movementsSearch" class="field-input mini" placeholder="Filtrer...">
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th><th>Type</th><th>Compte</th><th>Libellé</th><th>Montant</th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="movementsBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyMovements" class="empty-state" style="display:none">
+                        <div class="empty-icon">◈</div>
+                        <p>Aucun mouvement enregistré.</p>
+                        <p class="empty-hint">Validez une clôture de caisse ou ajoutez un mouvement manuel.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VUE GLOBALE -->
+            <section id="globalDash" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Vue globale</h1>
+                        <p class="page-subtitle">Consolidation de toutes les boutiques</p>
+                    </div>
+                    <button class="btn-ghost" id="switchShopBtn2" onclick="document.getElementById('switchShopBtn').click()">
+                        ⇄ Changer de boutique
+                    </button>
+                </div>
+
+                <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+                    <div class="kpi-card kpi-revenue">
+                        <div class="kpi-label">CA total (toutes boutiques)</div>
+                        <div class="kpi-value" id="globalTotalRevenue">—</div>
+                    </div>
+                    <div class="kpi-card kpi-profit">
+                        <div class="kpi-label">Bénéfice net consolidé</div>
+                        <div class="kpi-value" id="globalTotalNet">—</div>
+                    </div>
+                    <div class="kpi-card kpi-liquidity">
+                        <div class="kpi-label">Liquidités totales</div>
+                        <div class="kpi-value" id="globalTotalLiq">—</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Performance par boutique</h2>
+                        <span class="card-link" style="cursor:pointer" onclick="document.getElementById('switchShopBtn').click()">+ Nouvelle boutique</span>
+                    </div>
+                    <div id="globalDashContent"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+            <!-- GÉRANTS & CLIENTS -->
+            <section id="gerantscli" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Gérants & Clients</h1>
+                        <p class="page-subtitle">Gestion des pertes, dettes et crédits</p>
+                    </div>
+                </div>
+
+                <!-- Sous-onglets -->
+                <div class="gc-tabs">
+                    <button class="gc-tab active" data-sub="gerants" onclick="App.switchGCTab('gerants')">👤 Gérants & Pertes</button>
+                    <button class="gc-tab" data-sub="clients" onclick="App.switchGCTab('clients')">🧑‍🤝‍🧑 Clients & Crédits</button>
+                </div>
+
+                <!-- GÉRANTS -->
+                <div id="gcGerantsPane">
+                    <div class="gc-kpi-row">
+                        <div class="gc-kpi">
+                            <span class="gc-kpi-label">Total dettes gérants</span>
+                            <span id="gerantTotalDettes" class="gc-kpi-val neg">—</span>
+                        </div>
+                        <div class="gc-kpi">
+                            <span class="gc-kpi-label">Total pertes enregistrées</span>
+                            <span id="gerantTotalPertes" class="gc-kpi-val">—</span>
+                        </div>
+                    </div>
+
+                    <div class="two-col-layout">
+                        <div class="col-left">
+                            <div class="card">
+                                <div class="card-header"><h2 class="card-title">Ajouter un gérant</h2></div>
+                                <form id="gerantForm" class="form-stack">
+                                    <div class="field">
+                                        <label class="field-label">Nom complet</label>
+                                        <input type="text" id="gerantNom" class="field-input" required placeholder="Ex: Mamadou Diallo">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Contact (optionnel)</label>
+                                        <input type="text" id="gerantContact" class="field-input" placeholder="Téléphone ou email">
+                                    </div>
+                                    <button type="submit" class="btn-primary">Ajouter le gérant</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-right">
+                            <div id="gerantsList"></div>
+                            <div id="emptyGerants" class="empty-state" style="display:none">
+                                <div class="empty-icon">👤</div>
+                                <p>Aucun gérant enregistré.</p>
+                                <p class="empty-hint">Ajoutez vos gérants pour les assigner aux clôtures.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLIENTS -->
+                <div id="gcClientsPane" style="display:none">
+                    <div class="gc-kpi-row">
+                        <div class="gc-kpi">
+                            <span class="gc-kpi-label">Total crédits en cours</span>
+                            <span id="clientTotalCredits" class="gc-kpi-val neg">—</span>
+                        </div>
+                        <div class="gc-kpi">
+                            <span class="gc-kpi-label">Nombre de clients</span>
+                            <span id="clientCount" class="gc-kpi-val">—</span>
+                        </div>
+                    </div>
+
+                    <div class="two-col-layout">
+                        <div class="col-left">
+                            <div class="card">
+                                <div class="card-header"><h2 class="card-title">Nouveau client</h2></div>
+                                <form id="clientForm" class="form-stack">
+                                    <div class="field">
+                                        <label class="field-label">Nom complet</label>
+                                        <input type="text" id="clientNom" class="field-input" required placeholder="Ex: Fatoumata Bah">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Téléphone</label>
+                                        <input type="text" id="clientTel" class="field-input" placeholder="6XX XXX XXX">
+                                    </div>
+                                    <button type="submit" class="btn-primary">Ajouter le client</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-right">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title">Liste clients</h2>
+                                    <input type="text" id="clientSearch" class="field-input mini" placeholder="Rechercher...">
+                                </div>
+                                <div id="clientsList"></div>
+                                <div id="emptyClients" class="empty-state" style="display:none">
+                                    <div class="empty-icon">🧑‍🤝‍🧑</div>
+                                    <p>Aucun client enregistré.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CRÉDITS BANCAIRES -->
+            <section id="creditsbancaires" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Crédits bancaires</h1>
+                        <p class="page-subtitle">Suivi des remboursements et échéances</p>
+                    </div>
+                </div>
+
+                <div class="gc-kpi-row">
+                    <div class="gc-kpi">
+                        <span class="gc-kpi-label">Capital restant total</span>
+                        <span id="cbTotalRestant" class="gc-kpi-val neg">—</span>
+                    </div>
+                    <div class="gc-kpi">
+                        <span class="gc-kpi-label">Mensualités totales / mois</span>
+                        <span id="cbTotalMensuel" class="gc-kpi-val">—</span>
+                    </div>
+                </div>
+
+                <div class="two-col-layout">
+                    <div class="col-left">
+                        <div class="card">
+                            <div class="card-header"><h2 class="card-title">Nouveau crédit</h2></div>
+                            <form id="cbForm" class="form-stack">
+                                <div class="field">
+                                    <label class="field-label">Nom de la banque</label>
+                                    <input type="text" id="cbBanque" class="field-input" required placeholder="Ex: Ecobank, BICIGUI...">
+                                </div>
+                                <div class="field-row">
+                                    <div class="field">
+                                        <label class="field-label">Montant total (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="cbMontant" class="field-input" required placeholder="10 000 000">
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label">Mensualité (GNF)</label>
+                                        <input type="text" inputmode="decimal" id="cbMensualite" class="field-input" required placeholder="500 000">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label">Date de début</label>
+                                    <input type="date" id="cbDateDebut" class="field-input" required>
+                                </div>
+                                <button type="submit" class="btn-primary">Enregistrer le crédit</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-right">
+                        <div id="cbList"></div>
+                        <div id="cbEmpty" class="empty-state" style="display:none;">
+                            <div class="empty-icon">🏦</div>
+                            <p>Aucun crédit bancaire enregistré.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal paiement crédit bancaire -->
+    <div id="cbPayModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">🏦 Paiement — <span id="cbPayModalBanque"></span></h2>
+                <button class="modal-close" onclick="App.closeCBPaiementModal()">✕</button>
+            </div>
+            <div class="cb-pay-restant">Capital restant : <strong id="cbPayModalRestant"></strong></div>
+            <form id="cbPayForm" class="form-stack" style="margin-top:16px;">
+                <input type="hidden" id="cbPayModalId">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">Montant (GNF)</label>
+                        <input type="text" inputmode="decimal" id="cbPayMontant" class="field-input" required>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Date</label>
+                        <input type="date" id="cbPayDate" class="field-input" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">Compte débité</label>
+                    <select id="cbPayCompte" class="field-input field-select">
+                        <option value="bank">🏦 Banque</option>
+                        <option value="cash">💵 Caisse</option>
+                        <option value="mobile">📱 Mobile Money</option>
+                    </select>
+                </div>
+                <div class="field" style="flex-direction:row;align-items:center;gap:8px;">
+                    <input type="checkbox" id="cbPayAnticiped">
+                    <label for="cbPayAnticiped" class="field-label" style="text-transform:none;letter-spacing:0;font-size:13px;cursor:pointer;">
+                        Remboursement anticipé (hors mensualité normale)
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="field-label">Note (optionnel)</label>
+                    <input type="text" id="cbPayNote" class="field-input" placeholder="Ex: Paiement anticipé partiel">
+                </div>
+                <button type="submit" class="btn-primary">Confirmer le paiement</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal perte gérant -->
+    <div id="perteModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color:var(--red)">⚠ Écart de caisse détecté</h2>
+            </div>
+            <div class="perte-modal-body">
+                <div class="perte-info-row">
+                    <span>Manque</span>
+                    <span id="perteModalMontant" class="neg mono" style="font-size:20px;font-family:'JetBrains Mono',monospace"></span>
+                </div>
+                <div class="perte-info-row">
+                    <span>Gérant responsable</span>
+                    <span id="perteModalGerant" style="font-weight:600"></span>
+                </div>
+                <div class="perte-info-row">
+                    <span>Date</span>
+                    <span id="perteModalDate" class="muted"></span>
+                </div>
+                <div class="field" style="margin-top:16px;">
+                    <label class="field-label">Motif / Explication</label>
+                    <input type="text" id="perteMotif" class="field-input" placeholder="Ex: Erreur de monnaie, vol...">
+                </div>
+                <div class="perte-actions">
+                    <button class="btn-primary" onclick="App.handlePerte('imputée')">Imputer au gérant</button>
+                    <button class="btn-secondary" onclick="App.handlePerte('absorbée')">Absorber par la boutique</button>
+                    <button class="btn-ghost" onclick="App.closePerteModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal crédit client -->
+    <div id="creditModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Nouveau crédit — <span id="creditModalClientName"></span></h2>
+                <button class="modal-close" onclick="App.closeCreditModal()">✕</button>
+            </div>
+            <form id="creditForm" class="form-stack">
+                <input type="hidden" id="creditClientId">
+                <div class="field">
+                    <label class="field-label">Date</label>
+                    <input type="date" id="creditDate" class="field-input" required>
+                </div>
+                <div class="field">
+                    <label class="field-label">Description (produits achetés)</label>
+                    <input type="text" id="creditDescription" class="field-input" required placeholder="Ex: 2 sacs de riz, 1 bidon huile">
+                </div>
+                <div class="field">
+                    <label class="field-label">Montant total (GNF)</label>
+                    <input type="text" inputmode="decimal" id="creditMontant" class="field-input" required placeholder="50 000">
+                </div>
+                <button type="submit" class="btn-primary">Enregistrer le crédit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal remboursement -->
+    <div id="rembModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="rembModalTitle">Remboursement</h2>
+                <button class="modal-close" onclick="App.closeRembModal()">✕</button>
+            </div>
+            <form id="rembForm" class="form-stack">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">Montant (GNF)</label>
+                        <input type="text" inputmode="decimal" id="rembMontant" class="field-input" required placeholder="10 000">
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Date</label>
+                        <input type="date" id="rembDate" class="field-input" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">Mode de remboursement</label>
+                    <select id="rembType" class="field-input field-select">
+                        <option value="espèces">💵 Espèces</option>
+                        <option id="rembTypeMobile" value="mobile">📱 Mobile Money</option>
+                        <option value="salaire">👥 Retenue sur salaire</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label">Note (optionnel)</label>
+                    <input type="text" id="rembNote" class="field-input" placeholder="Ex: Paiement partiel...">
+                </div>
+                <button type="submit" class="btn-primary">Enregistrer le remboursement</button>
+            </form>
+        </div>
+    </div>
+    <div id="movementModal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="movModalTitle">Mouvement</h2>
+                <button class="modal-close" onclick="App.closeMovementModal()">✕</button>
+            </div>
+            <form id="movModalForm" class="form-stack">
+                <input type="hidden" id="movModalType">
+                <input type="hidden" id="movModalAccount">
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">Montant (GNF)</label>
+                        <input type="text" inputmode="decimal" id="movModalAmount" class="field-input" required placeholder="50 000">
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Date</label>
+                        <input type="date" id="movModalDate" class="field-input" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">Libellé</label>
+                    <input type="text" id="movModalLabel" class="field-input" required placeholder="Ex: Achat fournisseur">
+                </div>
+                <button type="submit" class="btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal impression -->
+    <div id="printModal" class="modal-overlay" style="display:none;">
+        <div class="modal" style="max-width:520px;">
+            <div class="modal-header">
+                <h2 class="modal-title">⎙ Imprimer un rapport</h2>
+                <button class="modal-close" onclick="App.closePrintModal()">✕</button>
+            </div>
+            <div class="form-stack">
+                <div class="field">
+                    <label class="field-label">Rapport à imprimer</label>
+                    <select id="printReportType" class="field-input field-select">
+                        <option value="dashboard">Tableau de bord (résumé global)</option>
+                        <option value="sales">Ventes détaillées</option>
+                        <option value="expenses">Dépenses</option>
+                        <option value="profit">Rapport bénéfices</option>
+                        <option value="inventory">Historique inventaires</option>
+                        <option value="caisse">Mouvements de caisse</option>
+                    </select>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">Du (optionnel)</label>
+                        <input type="date" id="printStartDate" class="field-input">
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Au (optionnel)</label>
+                        <input type="date" id="printEndDate" class="field-input">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="App.doPrint()">⎙ Générer et imprimer</button>
+                <button class="btn-ghost" onclick="App.closePrintModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="ap.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW enregistré :', reg.scope))
+                    .catch(err => console.warn('SW non enregistré :', err));
+            });
+        }
+    </script>
+</body>
+</html>
